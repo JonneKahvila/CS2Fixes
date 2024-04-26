@@ -151,8 +151,9 @@ CON_COMMAND_CHAT(maplist, "- List the maps in the server")
 	if (!g_bVoteManagerEnable)
 		return;
 
-	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "The list of all maps will be shown in console.");
-	ClientPrint(player, HUD_PRINTCONSOLE, "The list of all maps is:");
+	// ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "The list of all maps will be shown in console.");
+	ClientPrint(player, HUD_PRINTCONSOLE, "Lista kartoista:");
+  ClientPrint(player, HUD_PRINTTALK, "Lista kartoista:");
 	CUtlVector<const char*> vecMapNames;
 	for (int i = 0; i < g_pMapVoteSystem->GetMapListSize(); i++) {
 		vecMapNames.AddToTail(g_pMapVoteSystem->GetMapName(i));
@@ -160,6 +161,7 @@ CON_COMMAND_CHAT(maplist, "- List the maps in the server")
 	vecMapNames.Sort(OrderStringsLexicographically);
 	FOR_EACH_VEC(vecMapNames, i) {
 		ClientPrint(player, HUD_PRINTCONSOLE, "- %s", vecMapNames[i]);
+    ClientPrint(player, HUD_PRINTTALK, "- %s", vecMapNames[i]);
 	}
 }
 
@@ -224,7 +226,7 @@ void CMapVoteSystem::OnLevelInit(const char* pMapName)
 	}
 }
 
-void CMapVoteSystem::StartVote() 
+void CMapVoteSystem::StartVote()
 {
 	m_bIsVoteOngoing = true;
 
@@ -429,7 +431,7 @@ int CMapVoteSystem::WinningMapIndex()
 		iMaxVotes = (arrMapVotes[i] > iMaxVotes) ? arrMapVotes[i] : iMaxVotes;
 	}
 
-	// Identify how many maps are tied with the max number of votes    
+	// Identify how many maps are tied with the max number of votes
 	int iMapsWithMaxVotes = 0;
 	for (int i = 0; i < 10; i++) {
 		if (arrMapVotes[i] == iMaxVotes) iMapsWithMaxVotes++;
@@ -583,7 +585,7 @@ bool CMapVoteSystem::LoadMapList()
 	FOR_EACH_VEC(m_vecMapList, i) {
 		CMapInfo map = m_vecMapList[i];
 		ConMsg(
-			"Map %d is %s with workshop id %llu, which is %s.\n", 
+			"Map %d is %s with workshop id %llu, which is %s.\n",
 			i, map.GetName(), map.GetWorkshopId(), map.IsEnabled()? "enabled" : "disabled"
 		);
 	}
