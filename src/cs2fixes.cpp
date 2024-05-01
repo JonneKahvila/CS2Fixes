@@ -371,23 +371,23 @@ void CS2Fixes::Hook_DispatchConCommand(ConCommandHandle cmdHandle, const CComman
 		bool bGagged = pController && pController->GetZEPlayer()->IsGagged();
 		bool bFlooding = pController && pController->GetZEPlayer()->IsFlooding();
 		bool bAdminChat = bTeamSay && *args[1] == '@';
-		bool bSilent = *args[1] == '/' || bAdminChat;
+		bool bSilent = false;
 		bool bCommand = *args[1] == '!' || *args[1] == '/';
 
 		// Chat messages should generate events regardless
-		if (pController)
-		{
-			IGameEvent *pEvent = g_gameEventManager->CreateEvent("player_chat");
+		// if (pController)
+		// {
+		// 	IGameEvent *pEvent = g_gameEventManager->CreateEvent("player_chat");
 
-			if (pEvent)
-			{
-				pEvent->SetBool("teamonly", bTeamSay);
-				pEvent->SetInt("userid", pController->GetPlayerSlot());
-				pEvent->SetString("text", args[1]);
+		// 	if (pEvent)
+		// 	{
+		// 		pEvent->SetBool("teamonly", bTeamSay);
+		// 		pEvent->SetInt("userid", pController->GetPlayerSlot());
+		// 		pEvent->SetString("text", args[1]);
 
-				g_gameEventManager->FireEvent(pEvent, true);
-			}
-		}
+		// 		g_gameEventManager->FireEvent(pEvent, true);
+		// 	}
+		// }
 
 		if (!bGagged && !bSilent && !bFlooding)
 		{
@@ -432,7 +432,7 @@ void CS2Fixes::Hook_DispatchConCommand(ConCommandHandle cmdHandle, const CComman
 			ParseChatCommand(pszMessage, pController);
 		}
 
-		RETURN_META(MRES_SUPERCEDE);
+		// RETURN_META(MRES_SUPERCEDE);
 	}
 
 	RETURN_META(MRES_IGNORED);
@@ -483,7 +483,7 @@ void CS2Fixes::Hook_GameServerSteamAPIActivated()
 	g_http = g_steamAPI.SteamHTTP();
 
 	g_playerManager->OnSteamAPIActivated();
-  
+
 	if (g_bVoteManagerEnable && !g_pMapVoteSystem->IsMapListLoaded())
 		g_pMapVoteSystem->LoadMapList();
 
@@ -552,7 +552,7 @@ void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClie
 
 void CS2Fixes::AllPluginsLoaded()
 {
-	/* This is where we'd do stuff that relies on the mod or other plugins 
+	/* This is where we'd do stuff that relies on the mod or other plugins
 	 * being initialized (for example, cvars added and events registered).
 	 */
 
@@ -676,7 +676,7 @@ void CS2Fixes::Hook_GameFramePost(bool simulating, bool bFirstTick, bool bLastTi
 		if (timer->m_flLastExecute == -1)
 			timer->m_flLastExecute = g_flUniversalTime;
 
-		// Timer execute 
+		// Timer execute
 		if (timer->m_flLastExecute + timer->m_flInterval <= g_flUniversalTime)
 		{
 			if (!timer->Execute())
