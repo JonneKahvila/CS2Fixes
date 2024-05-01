@@ -339,8 +339,12 @@ void CZRPlayerClassManager::ApplyBaseClass(ZRClass* pClass, CCSPlayerPawn *pPawn
 	pPawn->SetModel(pClass->szModelPath.c_str());
 	pPawn->m_clrRender = clrRender;
 	pPawn->AcceptInput("Skin", pClass->iSkin);
-	pPawn->m_flVelocityModifier = pClass->flSpeed;
 	pPawn->m_flGravityScale = pClass->flGravity;
+
+	// I don't know why, I don't want to know why,
+	// I shouldn't have to wonder why, but for whatever reason
+	// this shit caused crashes on ROUND END or MAP CHANGE after the 26/04/2024 update
+	//pPawn->m_flVelocityModifier = pClass->flSpeed;
 
 	// This has to be done a bit later
 	UTIL_AddEntityIOEvent(pPawn, "SetScale", nullptr, nullptr, pClass->flScale);
@@ -575,16 +579,22 @@ void ZR_OnLevelInit()
 {
 	g_ZRRoundState = EZRRoundState::ROUND_START;
 
-	// Here we force some cvars that are necessary for the gamemode
-	g_pEngineServer2->ServerCommand("mp_give_player_c4 0");
-	g_pEngineServer2->ServerCommand("mp_friendlyfire 0");
-	g_pEngineServer2->ServerCommand("bot_quota_mode fill"); // Necessary to fix bots kicked/joining infinitely when forced to CT https://github.com/Source2ZE/ZombieReborn/issues/64
-	g_pEngineServer2->ServerCommand("mp_ignore_round_win_conditions 1");
-	// These disable most of the buy menu for zombies
-	g_pEngineServer2->ServerCommand("mp_weapons_allow_pistols 3");
-	g_pEngineServer2->ServerCommand("mp_weapons_allow_smgs 3");
-	g_pEngineServer2->ServerCommand("mp_weapons_allow_heavy 3");
-	g_pEngineServer2->ServerCommand("mp_weapons_allow_rifles 3");
+	// Delay one tick to override any .cfg's
+	new CTimer(0.02f, false, []()
+	{
+		// Here we force some cvars that are necessary for the gamemode
+		g_pEngineServer2->ServerCommand("mp_give_player_c4 0");
+		g_pEngineServer2->ServerCommand("mp_friendlyfire 0");
+		g_pEngineServer2->ServerCommand("bot_quota_mode fill"); // Necessary to fix bots kicked/joining infinitely when forced to CT https://github.com/Source2ZE/ZombieReborn/issues/64
+		g_pEngineServer2->ServerCommand("mp_ignore_round_win_conditions 1");
+		// These disable most of the buy menu for zombies
+		g_pEngineServer2->ServerCommand("mp_weapons_allow_pistols 3");
+		g_pEngineServer2->ServerCommand("mp_weapons_allow_smgs 3");
+		g_pEngineServer2->ServerCommand("mp_weapons_allow_heavy 3");
+		g_pEngineServer2->ServerCommand("mp_weapons_allow_rifles 3");
+
+		return -1.0f;
+	});
 
 	g_pZRPlayerClassManager->LoadPlayerClass();
 	g_pZRWeaponConfig->LoadWeaponConfig();
