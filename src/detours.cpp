@@ -47,9 +47,6 @@
 #include "networksystem/inetworkserializer.h"
 #include "map_votes.h"
 
-#define VPROF_ENABLED
-#include "tier0/vprof.h"
-
 #include "tier0/memdbgon.h"
 
 extern CGlobalVars *gpGlobals;
@@ -106,7 +103,7 @@ void FASTCALL Detour_CBaseEntity_TakeDamageOld(Z_CBaseEntity *pThis, CTakeDamage
 			inputInfo->m_flDamage,
 			inputInfo->m_bitsDamageType);
 #endif
-	
+
 	// Block all player damage if desired
 	if (g_bBlockAllDamage && pThis->IsPawn())
 		return;
@@ -168,7 +165,7 @@ void FASTCALL Detour_TriggerPush_Touch(CTriggerPush* pPush, Z_CBaseEntity* pOthe
 	Vector vecAbsDir;
 
 	matrix3x4_t mat = pPush->m_CBodyComponent()->m_pSceneNode()->EntityToWorldTransform();
-	
+
 	Vector pushDir = pPush->m_vecPushDirEntitySpace();
 
 	// i had issues with vectorrotate on linux so i did it here
@@ -282,7 +279,7 @@ void SayChatMessageWithTimer(IRecipientFilter &filter, const char *pText, CCSPla
 			{
 				if (pCurrentWord[j] >= '0' && pCurrentWord[j] <= '9')
 					continue;
-				
+
 				if (pCurrentWord[j] == 's')
 				{
 					pCurrentWord[j] = '\0';
@@ -522,7 +519,7 @@ bool InitDetours(CGameConfig *gameConfig)
 	{
 		if (!g_vecDetours[i]->CreateDetour(gameConfig))
 			success = false;
-		
+
 		g_vecDetours[i]->EnableDetour();
 	}
 

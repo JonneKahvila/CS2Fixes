@@ -32,9 +32,6 @@
 #include "ctime"
 #include "leader.h"
 
-#define VPROF_ENABLED
-#include "tier0/vprof.h"
-
 #include "tier0/memdbgon.h"
 
 
@@ -86,10 +83,10 @@ ZEPlayer *ZEPlayerHandle::Get() const
 
 	if (!pZEPlayer)
 		return nullptr;
-	
+
 	if (pZEPlayer->GetHandle().m_Index != m_Index)
 		return nullptr;
-	
+
 	return pZEPlayer;
 }
 
@@ -386,13 +383,13 @@ void ZEPlayer::StartGlow(Color color, int duration)
 {
 	CCSPlayerController *pController = CCSPlayerController::FromSlot(m_slot);
 	CCSPlayerPawn *pPawn = (CCSPlayerPawn*)pController->GetPawn();
-	
+
 	const char *pszModelName = pPawn->GetModelName();
-	
+
 	CBaseModelEntity *pModelGlow = (CBaseModelEntity*)CreateEntityByName("prop_dynamic");
 	CBaseModelEntity *pModelRelay = (CBaseModelEntity*)CreateEntityByName("prop_dynamic");
 	CEntityKeyValues *pKeyValuesRelay = new CEntityKeyValues();
-	
+
 	pKeyValuesRelay->SetString("model", pszModelName);
 	pKeyValuesRelay->SetInt64("spawnflags", 256U);
 	pKeyValuesRelay->SetInt("rendermode", kRenderNone);
@@ -412,7 +409,7 @@ void ZEPlayer::StartGlow(Color color, int duration)
 	pModelGlow->AcceptInput("FollowEntity", "!activator", pModelRelay);
 
 	m_hGlowModel.Set(pModelGlow);
-	
+
 	CHandle<CBaseModelEntity> hGlowModel = m_hGlowModel;
 	CHandle<CCSPlayerPawn> hPawn = pPawn->GetHandle();
 	int iTeamNum = hPawn->m_iTeamNum();
@@ -437,7 +434,7 @@ void ZEPlayer::StartGlow(Color color, int duration)
 
 			if (pModelParent)
 				addresses::UTIL_Remove(pModelParent);
-			
+
 			return -1.0f;
 		}
 
@@ -447,7 +444,7 @@ void ZEPlayer::StartGlow(Color color, int duration)
 	// kill glow after duration, if provided
 	if (duration < 1)
 		return;
-	
+
 	new CTimer((float)duration, false, [hGlowModel]()
 	{
 		CBaseModelEntity *pModel = hGlowModel.Get();
@@ -528,7 +525,7 @@ bool CPlayerManager::OnClientConnected(CPlayerSlot slot, uint64 xuid, const char
 	ResetPlayerFlags(slot.Get());
 
 	g_pMapVoteSystem->ClearPlayerInfo(slot.Get());
-	
+
 	return true;
 }
 
@@ -676,8 +673,6 @@ void CPlayerManager::CheckHideDistances()
 	if (!g_pEntitySystem)
 		return;
 
-	VPROF_ENTER_SCOPE(__FUNCTION__);
-
 	for (int i = 0; i < gpGlobals->maxClients; i++)
 	{
 		auto player = GetPlayer(i);
@@ -723,8 +718,6 @@ void CPlayerManager::CheckHideDistances()
 			}
 		}
 	}
-
-	VPROF_EXIT_SCOPE();
 }
 
 static const char *g_szPlayerStates[] =
@@ -802,7 +795,7 @@ void CPlayerManager::SetupInfiniteAmmo()
 
 			CPlayer_WeaponServices* pWeaponServices = pPawn->m_pWeaponServices;
 
-			// it can sometimes be null when player joined on the very first round? 
+			// it can sometimes be null when player joined on the very first round?
 			if (!pWeaponServices)
 				continue;
 
@@ -843,7 +836,7 @@ ETargetType CPlayerManager::TargetPlayerString(int iCommandClient, const char* t
 		targetType = ETargetType::RANDOM_T;
 	else if (!V_stricmp(target, "@randomct"))
 		targetType = ETargetType::RANDOM_CT;
-	
+
 	if (targetType == ETargetType::SELF && iCommandClient != -1)
 	{
 		clients[iNumClients++] = iCommandClient;
